@@ -1,1 +1,7 @@
-{}
+{
+    "files.associations": {
+        "*.java": "java",
+        "string.h": "c",
+        "stdbool.h": "c"
+    }
+}
