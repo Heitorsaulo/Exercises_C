@@ -1,26 +1,27 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-
-#define LISTA_ENC
+#ifndef LISTA_DUPLAMENTE_ENC
+#define LISTA_DUPLAMENTE_ENC
 
 typedef int ITEM;
 
-typedef struct estrutura {
-  ITEM item;
-  struct estrutura *prox;
+typedef struct estrutura
+{
+    ITEM item;
+    struct estrutura *ant;
+    struct estrutura *prox;
 } NO;
- 
-typedef struct {
-  NO *cabeca;
-  NO *cauda;
-  int tamanho;
+
+typedef struct
+{
+    NO* cabeca;
+    NO* cauda;
+    int tamanho;
 } LISTA;
 
-void inserirNoFinal(ITEM item, LISTA *lista);
-LISTA *clonar(LISTA *l);
 /*
    Compara o item x com o y, retornando:
      1 caso x > y
@@ -45,6 +46,17 @@ bool cheia(LISTA *l);
 bool vazia(LISTA *l);
 
 /*
+    Objetivo: Retorna o endereco do No contido na posicao informada.
+              Caso a posicao seja invalida (negativa ou maior ou igual
+              ao tamanho da lista, retorna NULL.
+*/
+NO* noNaPosicao(int n, LISTA *l);
+
+// Retorna o enderere do NO que contem o item.
+// Caso nao encontre, retorna NULL
+NO* buscarNO(ITEM item, LISTA *l);
+
+/* 
   Objetivo: Insere o item passado como parametro na lista passada.
             Se o tamanho da lista ja for igual ao tamanho maximo,
             a funcao Inserir retorna false.
@@ -72,7 +84,7 @@ bool alterar(ITEM item, int pos, LISTA *l);
 /*
   Objetivo: Inserir o item passado como parametro na posicao i da lista.
             Caso a lista nao esteja cheia e a posicao seja valida
-            (0<=i<=tamanho), o item sera inserido e a funcao retorna true.
+            (0<=i<=tamanho), o item sera inserido e a funcao retorna true. 
             Caso contrario, a funcao retorna false para indicar que o item
             nao foi inserido.
  */
@@ -82,7 +94,7 @@ bool inserirNaPos(ITEM item, int i, LISTA *l);
   Objetivo: Remove o item passado da lista. Caso nao seja
             encontrato, retorna false. Se for removido, true.
 */
-bool removerDaPos(ITEM item, int posicao, LISTA *l);
+bool remover(ITEM item, LISTA *l);
 
 // Exibicao de um item da lista
 void exibirItem(ITEM i);
@@ -96,8 +108,9 @@ void limpar(LISTA *l);
 // Destruicao da lista sequencial
 void destruir(LISTA *l);
 
-void intercao(LISTA *l1, LISTA *l2, LISTA *l3);
+void inserirNoFinal(ITEM item, LISTA *l);
 
-NO *retornaUltimoNo(LISTA *lista);
+void inverter(LISTA *l);
 
-NO *criarNoFinal(ITEM item);
+void 
+#endif // LISTA_DUPLAMENTE_ENC

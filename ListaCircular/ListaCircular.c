@@ -11,6 +11,10 @@ bool igual(ITEM x, ITEM y) { return compare(x, y) == 0; }
 
 void inicializar(LISTA *l) {
   l->cabeca = (NO *)malloc(sizeof(NO));
+  if (l->cabeca == NULL) {
+    printf("Nao foi possivel alocar memoria para a cabeca\n");
+    exit(EXIT_FAILURE);
+  }
   l->cabeca->prox = l->cabeca; // faz a referencia circular
   l->tamanho = 0;
 }
@@ -157,21 +161,29 @@ void exibirLista(LISTA *l) {
 }
 
 void inserirNoFinal(ITEM item, LISTA *l) {
-  NO *p = l->cabeca;
-  NO *aux;
-  while (p->prox != l->cabeca) {
-    p = p->prox;
+  NO *novoNo = criarNo(item, l->cabeca); // Cria um novo nó apontando para a cabeça
+  
+  if (vazia(l)) { // Se a lista estiver vazia, insere diretamente
+    l->cabeca->prox = novoNo;
+  } else {
+    NO *ultimo = l->cabeca->prox; // Começa pelo primeiro nó
+
+    // Encontra o último nó da lista
+    while (ultimo->prox != l->cabeca) {
+      ultimo = ultimo->prox;
+    }
+
+    // Atualiza o ponteiro do último nó para apontar para o novo nó
+    ultimo->prox = novoNo;
   }
-  aux = l->cabeca;
-  l->cabeca = p;
-  inserir(item, l);
-  l->cabeca = aux;             
+
+  l->tamanho++;
 }
 
 bool removerDaPos(ITEM *item, int i, LISTA *l) {
   NO *p = l->cabeca;
   NO *pAnterior;
-  if (i > l->tamanho || i < 0) {
+  if (i >= l->tamanho || i < 0) {
     return false;
   }
   else if(i == 0){
@@ -181,7 +193,7 @@ bool removerDaPos(ITEM *item, int i, LISTA *l) {
     return true;
   }
   else{
-  for (int j = 0; j < i; j++) {
+  for (int j = 0; j <= i; j++) {
 
     if (j == i) {
         item = &p->item;
@@ -204,18 +216,77 @@ bool removerDaPos(ITEM *item, int i, LISTA *l) {
   }
 }
 
-LISTA *clonar(LISTA *l){
-    LISTA *lClonada;
-    inicializar(lClonada);
-    NO *p = l->cabeca;
-    inserir(l->cabeca->item,lClonada);
-    for(int i = 0; i<l->tamanho - 1; i++){
-        if(p->prox == l->cabeca){
-            return lClonada;
+LISTA *clonar(LISTA *l) {
+    LISTA *lClonada = (LISTA *)malloc(sizeof(LISTA) * l->tamanho);
+    inicializar(lClonada); 
+
+    NO *auxL = l->cabeca->prox;
+    NO *auxLclonada = lClonada->cabeca;
+    NO *novoNo = NULL;
+    lClonada->cabeca->item = l->cabeca->item;
+    while (auxL != l->cabeca) {
+        novoNo = criarNo(auxL->item,lClonada->cabeca);
+        auxLclonada->prox = novoNo;
+        auxL = auxL -> prox;
+        auxLclonada = auxLclonada->prox;
+        lClonada->tamanho++;
+    }
+
+    return lClonada;
+}
+
+void inverter(LISTA *l){
+  NO *auxAntes = l->cabeca;
+  NO *auxAtual = l->cabeca->prox;
+  NO *auxProx = NULL;
+  while(auxAtual != l->cabeca){
+    auxProx = auxAtual->prox;
+
+    auxAtual->prox = auxAntes;
+  
+    auxAntes = auxAtual;
+    auxAtual = auxProx;
+  }
+    
+  
+  auxProx = auxAtual->prox;
+  auxAtual->prox = auxAntes;
+  auxAntes =auxAtual;
+  auxAtual = auxProx;
+  auxAtual->prox = auxAntes;
+  l->cabeca = auxAntes;
+}
+
+bool insercaoOrdenada(ITEM item, LISTA *l){
+  NO* auxAnterior = l->cabeca;
+  NO* auxAtual = l->cabeca->prox;
+
+  NO* novoNo = criarNo(item,NULL);
+
+  if(l->tamanho == 0){
+    l->cabeca->prox = criarNo(item,l->cabeca);
+    l->tamanho++;
+    return true;
+  }
+  else{
+    
+    while(auxAtual!=l->cabeca){
+        if(item<auxAtual->item){
+          auxAnterior->prox = novoNo;
+          novoNo->prox = auxAtual;
+          l->tamanho++;
+          return true;
         }
         else{
-            inserir(p->prox->item,lClonada);
-            p = p->prox;
+          auxAnterior = auxAnterior->prox;
+          auxAtual = auxAtual->prox;
         }
-    }
+      }
+
+  }
+
+  auxAnterior->prox = novoNo;
+  novoNo->prox = auxAtual;
+  l->tamanho++;
+  return true;
 }

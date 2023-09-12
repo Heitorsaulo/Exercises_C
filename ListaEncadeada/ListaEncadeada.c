@@ -11,6 +11,7 @@ bool igual(ITEM x, ITEM y) { return compare(x, y) == 0; }
 
 void inicializar(LISTA *l) {
   l->cabeca = NULL;
+  l->cauda = NULL;
   l->tamanho = 0;
 }
 
@@ -32,7 +33,7 @@ bool cheia(LISTA *l) { return false; }
 bool vazia(LISTA *l) { return l->cabeca == NULL; }
 
 bool inserir(ITEM item, LISTA *l) {
-
+  
   NO *no = criarNo(item, l->cabeca);
   NO *noAux = no;
 
@@ -41,7 +42,7 @@ bool inserir(ITEM item, LISTA *l) {
     l->cauda = no;
     l->tamanho++;
     return true;
-  } 
+  }  
   else if (l->tamanho == 1) {
     if (item < l->cabeca->item) {
       noAux = l->cabeca;
@@ -181,46 +182,29 @@ void limpar(LISTA *l) {
 void destruir(LISTA *l) { limpar(l); }
 
 bool removerDaPos(ITEM item, int posicao, LISTA *lista) {
-  NO *cabeca = lista->cabeca;
-  NO *noAnterior = cabeca->prox;
-  NO *noPosterior = cabeca->prox;
+  NO *noAtual = lista->cabeca;
+  NO *noAnterior = NULL;
+  NO *noPosterior = noAtual->prox;
 
   int i = 0;
   if ((posicao > lista->tamanho) || (posicao < 0))
     return false;
-  else if (posicao == 0)
-    lista->cabeca = noAnterior;
+  else if (posicao == 0){
+    lista->cabeca = noPosterior;
+    free(noAtual);
+    }
   else {
-    for (i = 0; i < posicao; i++) {
+    for (i = 0; i <= posicao; i++) {
       if (i == posicao) {
         noAnterior->prox = noPosterior;
+        free(noAtual);
         lista->tamanho--;
         return true;
       }
-      noAnterior = cabeca;
-      cabeca = cabeca->prox;
-      noPosterior = cabeca->prox;
+      noAnterior = noAtual;
+      noAtual = noAtual->prox;
+      noPosterior = noPosterior->prox;
     }
-  }
-}
-
-LISTA *clonar(LISTA *l) {
-
-  LISTA *listaCopia;
-  inicializar(listaCopia);
-
-  if (l->tamanho == 0) {
-    listaCopia->cabeca->prox = NULL;
-    return listaCopia;
-  } else {
-    NO *cabecaListaCopiada = l->cabeca;
-    NO *auxNo = l->cabeca;
-    listaCopia->cabeca = auxNo;
-    printf("%d", listaCopia->cabeca->item);
-    // NO *cabecaListaClonada = criarNoFinal(cabecaListaClonada->item);
-    // listaCopia->cabeca = cabecaListaClonada;
-
-    return listaCopia;
   }
 }
 
@@ -247,3 +231,46 @@ NO *criarNoFinal(ITEM item) {
   pNovo->item = item;
   return pNovo;
 }
+
+void intercao(LISTA *l1, LISTA *l2, LISTA *l3){
+  
+  NO *auxL1 = l1->cabeca;
+  NO *auxL2 = NULL;
+  NO *noAux = NULL;
+
+  while(auxL1 != NULL){
+    auxL2 = l2->cabeca;
+    while(auxL2 != NULL){
+      if(auxL1->item == auxL2->item){
+          if(l3->cabeca == NULL){
+            l3->cabeca = criarNo(auxL1->item, NULL);
+            l3->cauda = l3->cabeca;
+          }
+          else{
+              l3->cauda->prox = criarNo(auxL1->item, NULL);
+              l3->cauda = l3->cauda->prox;
+          }
+        }
+        auxL2 = auxL2->prox;
+      }
+      auxL1 = auxL1->prox;
+    }
+    
+  } 
+ 
+  void inverter(LISTA *l){
+    NO *auxAnt = NULL;
+    NO *auxAtual = l->cabeca;
+    NO *auxProx = NULL;
+
+    
+    while(auxAtual != NULL){
+      auxProx = auxAtual -> prox;
+
+      auxAtual->prox = auxAnt;
+      auxAnt = auxAtual;
+      auxAtual = auxProx;
+    }
+
+    l->cabeca = auxAnt;
+  }

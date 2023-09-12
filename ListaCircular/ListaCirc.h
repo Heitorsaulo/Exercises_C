@@ -98,4 +98,8 @@ void inserirNoFinal(ITEM item, LISTA *l);
 bool removerDaPos(ITEM *item, int i, LISTA *l);
 
 LISTA * clonar(LISTA *l);
+
+void inverter(LISTA *l);
+
+bool insercaoOrdenada(ITEM item, LISTA *l);
 #endif // LISTA_CIRC
