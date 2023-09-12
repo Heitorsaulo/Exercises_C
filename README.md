@@ -1,2 +1,2 @@
-# Exercises_C
-Some challenges from the huxley solved in C
+# data_struct
+some data structures from my uni class on the subject
